@@ -57,7 +57,7 @@ while [ "$1" != "" ]; do
         -n | --nic )                nic
                                 exit
                                 ;;
-    esac # who comes up with this syntax lol
+    esac
     shift
 done
 
