@@ -32,11 +32,18 @@ usage()
     echo -e "${CYA}CONFIG${NC}"
     echo -e "${VI}-u | --update${NC} | Updates Theos."
     echo ""
+    echo -e "${VI}-n | --nic${NC} | Runs nic.pl."
+    echo ""
 }
 
 checkra1n()
 {
     fakeroot checkra1n
+}
+
+nic()
+{
+  $THEOS/bin/nic.pl
 }
 
 while [ "$1" != "" ]; do
@@ -45,6 +52,9 @@ while [ "$1" != "" ]; do
                                 exit
                                 ;;
         -c | --checkra1n )          checkra1n
+                                exit
+                                ;;
+        -n | --nic )                nic
                                 exit
                                 ;;
     esac # who comes up with this syntax lol
