@@ -14,7 +14,7 @@ update()
   cd $THEOS || exit
   git pull
   git submodule update --init --recursive
-  cd $SCRIPTDIR || exit
+  cd $HOME/TheosScript || exit
   git pull
   git submodule update --init --recursive
   cd $x || exit
