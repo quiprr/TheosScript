@@ -2,11 +2,11 @@
 
 cd $HOME
 
+sudo apt install fakeroot curl wget
+
 git clone https://github.com/ajaidan0/TheosScript.git
 
 cd $HOME/theosscript
-
-sudo apt install fakeroot
 
 sudo chmod +x ./theos
 
