@@ -1,0 +1,57 @@
+#!/bin/bash
+
+NC='\033[0m'                            # No Color.
+
+VI='\033[0;95m'                         # Violet.
+YE='\033[1;93m'                         # Yellow.
+CYA='\033[0;96m'                        # Cyan.
+GR='\033[0;32m'                         # Green.
+BAD='\033[0;91m'                        # Strong red. For errors.
+
+update()
+{
+  x=$PWD
+  cd $THEOS || exit
+  git pull
+  git submodule update --init --recursive
+  cd $SCRIPTDIR || exit
+  git pull
+  git submodule update --init --recursive
+  cd $x || exit
+}
+
+usage()
+{
+    echo ""
+    echo -e "${CYA}THEOS${NC}"
+    echo "usage: theos [commands]"
+    echo ""
+    echo -e "${CYA}MISC${NC}"
+    echo -e "${VI}-c | --checkra1n${NC} | Opens checkra1n."
+    echo ""
+    echo -e "${CYA}CONFIG${NC}"
+    echo -e "${VI}-u | --update${NC} | Updates Theos."
+    echo ""
+}
+
+checkra1n()
+{
+    fakeroot checkra1n
+}
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -u | --update )            update
+                                exit
+                                ;;
+        -c | --checkra1n )          checkra1n
+                                exit
+                                ;;
+    esac # who comes up with this syntax lol
+    shift
+done
+
+if [ "$1" == "" ]; then
+  usage
+  exit
+fi
