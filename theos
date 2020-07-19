@@ -11,15 +11,15 @@ BAD='\033[0;91m'                        # Strong red. For errors.
 update()
 {
   x=$PWD
-  echo -e "${YE}THEOS${NC}"
+  echo -e "${CYA}THEOS${NC}"
   cd $THEOS || exit
   git pull
   git submodule update --init --recursive
-  echo -e "${YE}SDKs${NC}"
+  echo -e "${CYA}SDKs${NC}"
   cd $THEOS/sdks || exit
   git pull
   git submodule update --init --recursive
-  echo -e "${YE}COMMAND${NC}"
+  echo -e "${CYA}COMMAND${NC}"
   cd $HOME/TheosScript || exit
   git pull
   git submodule update --init --recursive
