@@ -26,6 +26,9 @@ usage()
     echo -e "${CYA}THEOS${NC}"
     echo "usage: theos [commands]"
     echo ""
+    echo -e "${CYA}BUILDING${NC}"
+    echo -e "${VI}-b | --build${NC} | Builds a package."
+    echo ""
     echo -e "${CYA}MISC${NC}"
     echo -e "${VI}-c | --checkra1n${NC} | Opens checkra1n."
     echo ""
@@ -55,6 +58,9 @@ while [ "$1" != "" ]; do
                                 exit
                                 ;;
         -n | --nic )                nic
+                                exit
+                                ;;
+        -b | --build )              make package FINALPACKAGE=1
                                 exit
                                 ;;
     esac
