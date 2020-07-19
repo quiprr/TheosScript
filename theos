@@ -91,7 +91,7 @@ while [ "$1" != "" ]; do
         -n | --nic )                $THEOS/bin/nic.pl
                                 exit
                                 ;;
-        -b | --build )              make package FINALPACKAGE=1
+        -b | --build )              make clean package FINALPACKAGE=1
                                 exit
                                 ;;
         -cl | --clang )             sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
