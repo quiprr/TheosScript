@@ -14,6 +14,9 @@ update()
   cd $THEOS || exit
   git pull
   git submodule update --init --recursive
+  cd $THEOS/sdks || exit
+  git pull
+  git submodule update --init --recursive
   cd $HOME/TheosScript || exit
   git pull
   git submodule update --init --recursive
@@ -37,6 +40,11 @@ usage()
     echo ""
     echo -e "${VI}-n | --nic${NC} | Runs nic.pl."
     echo ""
+    echo -e "${CYA}INSTALL${NC}"
+    echo -e "${VI}-cl | --clang${NC} | Installs the latest clang toolchain."
+    echo ""
+    echo -e "${VI}-inst${NC} | --install | Installs Theos."
+    echo ""
 }
 
 checkra1n()
@@ -44,9 +52,29 @@ checkra1n()
     fakeroot checkra1n
 }
 
-nic()
+install()
 {
-  $THEOS/bin/nic.pl
+    x=$PWD
+    echo -e "${CYA}Installing dependencies...${NC}"
+    sudo apt-get install fakeroot git perl clang-6.0 build-essential
+    echo -e "${CYA}Instantiating variables...${NC}"
+    echo "export THEOS=~/theos" >> ~/.profile
+    echo "export THEOS=~/theos" >> ~/.bashrc
+    echo -e "${CYA}Cloning theos...${NC}"
+    git clone --recursive https://github.com/theos/theos.git $HOME/theos
+    rm -rf $HOME/theos/sdks
+    echo -e "${CYA}Getting toolchain...${NC}"
+    cd $HOME
+    curl -LO https://github.com/sbingner/llvm-project/releases/download/v10.0.0-1/linux-ios-arm64e-clang-toolchain.tar.lzma
+    tar -xvf $HOME/linux-ios-arm64e-clang-toolchain.tar.lzma
+    sudo mkdir -p $HOME/theos/toolchain/linux/iphone
+    sudo mv ios-arm64e-clang-toolchain/* $HOME/theos/toolchain/linux/iphone
+    rm -rf ios-arm64e-clang-toolchain
+    rm -rf linux-ios-arm64e-clang-toolchain.tar.lzma
+    echo -e "${CYA}Getting SDKs...${NC}"
+    git clone https://github.com/xybp888/iOS-SDKS $THEOS/sdks
+    cd $x
+    echo -e "${CYA}Installation is done. In order for the theos variable to take place, you must restart your terminal.${NC}"
 }
 
 while [ "$1" != "" ]; do
@@ -57,10 +85,16 @@ while [ "$1" != "" ]; do
         -c | --checkra1n )          checkra1n
                                 exit
                                 ;;
-        -n | --nic )                nic
+        -n | --nic )                $THEOS/bin/nic.pl
                                 exit
                                 ;;
         -b | --build )              make package FINALPACKAGE=1
+                                exit
+                                ;;
+        -cl | --clang )             sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+                                exit
+                                ;;
+        -inst | --install)          install
                                 exit
                                 ;;
     esac
