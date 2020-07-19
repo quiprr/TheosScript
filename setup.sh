@@ -10,4 +10,4 @@ cd $HOME/TheosScript
 
 sudo chmod +x ./theos
 
-sudo ln ./theos /usr/bin
+sudo ln ./theos /usr/local/bin
