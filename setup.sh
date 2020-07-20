@@ -59,6 +59,8 @@ script() {
     else linuxInstall
     fi
     cd $HOME
+    
+    git clone https://github.com/ajaidan0/theosscript
 
     cd $HOME/theosscript
 
