@@ -44,6 +44,7 @@ usage()
     echo -e "${VI}-dr | --devicerun | Run a command on the device's IP that you selected."
     echo ""
     echo -e "${VI}-r | --respring | Resprings on your development device."
+    echo ""
     echo -e "${CYA}CONFIG${NC}"
     echo -e "${VI}-u | --update${NC} | Updates Theos."
     echo ""
