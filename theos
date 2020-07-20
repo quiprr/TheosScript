@@ -48,7 +48,9 @@ usage()
     echo -e "${CYA}CONFIG${NC}"
     echo -e "${VI}-u | --update${NC} | Updates Theos."
     echo ""
-    echo -e "${VI}-n | --nic${NC} | Runs nic.pl."
+    echo -e "${VI}-n | --nic${NC} | Runs nic.pl." 
+    echo ""
+    echo -e "${VI}-v | --version${NC} | Displays the script's version."
     echo ""
     echo -e "${CYA}INSTALL${NC}"
     echo -e "${VI}-cl | --clang${NC} | Installs the latest clang toolchain."
@@ -114,6 +116,9 @@ while [ "$1" != "" ]; do
                                 exit
                                 ;;
         -r | --respring)            ssh root@$THEOS_DEVICE_IP "killall SpringBoard"
+                                exit
+                                ;;
+        -v | --version)             echo -e "${VI}1.0${NC}"
                                 exit
                                 ;;
     esac
