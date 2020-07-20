@@ -107,7 +107,7 @@ while [ "$1" != "" ]; do
         -n | --nic)                 $THEOS/bin/nic.pl
                                 exit
                                 ;;
-        -b | --build)               make package $* || echo "Theos could not build this project because you are not in a tweak's directory."
+        -b | --build)               make package $*
                                 exit
                                 ;;
         -cl | --clang)              fakeroot bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
@@ -116,33 +116,20 @@ while [ "$1" != "" ]; do
         -inst | --install)          install
                                 exit
                                 ;;
-        -s | --ssh)                 ssh mobile@$THEOS_DEVICE_IP || commandfailed=1
-                                    if [ $commandfailed == 1 ]
-                                        echo "SSH Could not open because you do not have THEOS_DEVICE_IP set up."
-                                    fi
+        -s | --ssh)                 ssh mobile@$THEOS_DEVICE_IP > /dev/null 2>&1 || echo "SSH could not open because THEOS_DEVICE_IP is not set up."
                                 exit
                                 ;;
         -dr | --devicerun)      shift
-                                    ssh root@$THEOS_DEVICE_IP "$*" || commandfailed=1
-                                    if [ $commandfailed == 1 ]
-                                        echo "SSH Could not open because you do not have THEOS_DEVICE_IP set up."
-                                    fi
+                                    ssh root@$THEOS_DEVICE_IP "$*" > /dev/null 2>&1 || echo "SSH could not open because THEOS_DEVICE_IP is not set up."
                                 exit
                                 ;;
-        -r | --respring)            ssh root@$THEOS_DEVICE_IP "killall SpringBoard" || commandfailed=1
-                                    if [ $commandfailed == 1 ]
-                                        echo "SSH Could not open because you do not have THEOS_DEVICE_IP set up."
-                                    fi
+        -r | --respring)            ssh root@$THEOS_DEVICE_IP "killall SpringBoard" > /dev/null 2>&1 || echo "SSH could not open because THEOS_DEVICE_IP is not set up."
                                 exit
                                 ;;
         -v | --version)             echo -e "${YE}1.0.1${NC}"
                                 exit
                                 ;;
-        -rl | --rlog)               python $HOME/theosscript/rlogserver.py || commandfailed=1
-                                    if [ commandfailed=1 ]
-                                        echo "RLog could not open because Python is not installed."
-                                    fi
-                                exit
+        -rl | --rlog)               python $HOME/theosscript/rlogserver.py
                                 ;;
     esac
     shift

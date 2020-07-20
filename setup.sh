@@ -2,6 +2,17 @@
 
 # heavy thanks to kritanta for the baseline of this script.
 
+nosudo() {
+    echo "This cannot be ran as root or with sudo."
+    exit 1
+}
+
+crd=$PWD
+
+[[ $UID == 0 || $EUID == 0 ]] && nosudo
+
+sudo -p "Password for installation: " printf "" || exit 1
+
 NC='\033[0m'                            # No Color.
 
 VI='\033[0;95m'                         # Violet.
@@ -40,6 +51,11 @@ macosInstall() {
       echo "export THEOS_DEVICE_IP=$IP" >> ~/.zprofile
       echo "export THEOS_DEVICE_IP=$IP" >> ~/.zshrc
       echo ""
+      echo -e "${YE}The script will now set up ssh-copy-id. It will ask you some questions, make sure you answer them.${NC}"
+      echo ""
+      ssh-keygen
+      ssh-copy-id root@$IP
+      ssh-copy-id mobile@$IP
 
       echo "The THEOS Command has been installed. Please restart your terminal to allow the variables to take effect."
     else
@@ -67,10 +83,12 @@ linuxInstall() {
       echo "export THEOS_DEVICE_IP=$IP" >> ~/.bashrc
       echo "export THEOS_DEVICE_IP=$IP" >> ~/.profile
       echo ""
+      echo -e "${YE}The script will now set up ssh-copy-id. It will ask you some questions, make sure you answer them.${NC}"
+      echo ""
+      ssh-keygen
+      ssh-copy-id root@$IP
+      ssh-copy-id mobile@$IP
 
-      echo "The THEOS Command has been installed. Please restart your terminal to allow the variables to take effect."
-    else
-      echo "The THEOS Command has been installed."
     fi
 }
 
@@ -91,9 +109,15 @@ script() {
 
     sudo chmod +x ./theos
 
-    sudo ln -s ./theos /usr/local/bin
+    sudo ln ./theos /usr/bin/theos
 
     cd $x
+
+    if [[ $IP != "" ]]; then
+      echo "The THEOS Command has been installed. Please restart your terminal to allow the variables to take effect."
+    else
+      echo "The THEOS Command has been installed."
+    fi
 }
 
 script
