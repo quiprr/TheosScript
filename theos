@@ -34,7 +34,7 @@ usage()
     echo "usage: theos [commands]"
     echo ""
     echo -e "${CYA}BUILDING${NC}"
-    echo -e "${VI}-b | --build${NC} | Builds a package."
+    echo -e "${VI}-b | --build${NC} | Builds a package. (Put any variables you'd like to pass to the compiler after the command)"
     echo ""
     echo -e "${CYA}MISC${NC}"
     echo -e "${VI}-c | --checkra1n${NC} | Opens checkra1n."
@@ -97,7 +97,7 @@ while [ "$1" != "" ]; do
         -n | --nic)                 $THEOS/bin/nic.pl
                                 exit
                                 ;;
-        -b | --build)               make clean package FINALPACKAGE=1
+        -b | --build)               make package $*
                                 exit
                                 ;;
         -cl | --clang)              sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
