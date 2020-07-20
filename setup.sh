@@ -1,6 +1,15 @@
 #!/bin/sh
 
 # heavy thanks to kritanta for the baseline of this script.
+
+NC='\033[0m'                            # No Color.
+
+VI='\033[0;95m'                         # Violet.
+YE='\033[1;93m'                         # Yellow.
+CYA='\033[0;96m'                        # Cyan.
+GR='\033[0;32m'                         # Green.
+BAD='\033[0;91m'                        # Strong red. For errors.
+
 x=$PWD
 
 need=""
@@ -34,7 +43,7 @@ linuxInstall() {
       else failedinstall=1;
       fi
       if [ $failedinstall == 1 ]; then
-        echo "You need to manually install: $need">&2; 
+        echo -e "${BAD}You need to manually install:${NC} $need">&2; 
       fi
     fi
 }

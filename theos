@@ -118,7 +118,7 @@ while [ "$1" != "" ]; do
         -r | --respring)            ssh root@$THEOS_DEVICE_IP "killall SpringBoard"
                                 exit
                                 ;;
-        -v | --version)             echo -e "${VI}1.0${NC}"
+        -v | --version)             echo -e "${YE}1.0${NC}"
                                 exit
                                 ;;
     esac
