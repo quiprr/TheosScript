@@ -18,6 +18,7 @@ command -v fakeroot >/dev/null 2>&1 || need+="fakeroot "
 command -v curl >/dev/null 2>&1 || need+="curl "
 command -v wget >/dev/null 2>&1 || need+="wget "
 command -v git >/dev/null 2>&1 || need+="git "
+command -v python >/dev/null 2>&1 || need+="python "
 
 iosInstall() {
     echo "This script is incompatable with iOS."

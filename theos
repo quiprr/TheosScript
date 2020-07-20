@@ -45,6 +45,8 @@ usage()
     echo ""
     echo -e "${VI}-r | --respring${NC} | Resprings on your development device."
     echo ""
+    echo -e "${VI}-rl | --rlog${NC} | Opens RLog."
+    echo ""
     echo -e "${CYA}CONFIG${NC}"
     echo -e "${VI}-u | --update${NC} | Updates Theos."
     echo ""
@@ -93,13 +95,13 @@ while [ "$1" != "" ]; do
         -u | --update)              update
                                 exit
                                 ;;
-        -c | --checkra1n)           checkra1n
+        -c | --checkra1n)           checkra1n || echo "Checkra1n could not open because you do not have it installed."
                                 exit
                                 ;;
         -n | --nic)                 $THEOS/bin/nic.pl
                                 exit
                                 ;;
-        -b | --build)               make package $*
+        -b | --build)               make package $* || echo "Theos could not build this project because you are not in a tweak's directory."
                                 exit
                                 ;;
         -cl | --clang)              sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
@@ -119,6 +121,9 @@ while [ "$1" != "" ]; do
                                 exit
                                 ;;
         -v | --version)             echo -e "${YE}1.0${NC}"
+                                exit
+                                ;;
+        -rl | --rlog)               python $HOME/theosscript/rlogserver.py || echo "RLog couldn't open because you do not have python installed. Run setup.sh to install."
                                 exit
                                 ;;
     esac
