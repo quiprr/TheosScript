@@ -109,7 +109,10 @@ script() {
 
     sudo chmod +x ./theos
 
-    sudo ln ./theos /usr/bin/theos
+    if [ "$distr" == "Darwin" ]; then
+      sudo ln ./theos /usr/local/bin/theos
+    else sudo ln ./theos /usr/bin/theos
+    fi 
 
     cd $x
 
