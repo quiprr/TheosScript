@@ -31,7 +31,6 @@ command -v wget >/dev/null 2>&1 || need+="wget "
 command -v git >/dev/null 2>&1 || need+="git "
 command -v python >/dev/null 2>&1 || need+="python "
 command -v perl >/dev/null 2>&1 || need+="perl"
-command -v clang-6.0 >/dev/null 2>&1 || need+="clang-6.0 "
 
 iosInstall() {
     echo "This script is incompatable with iOS."
@@ -57,13 +56,11 @@ macosInstall() {
       ssh-copy-id root@$IP
       ssh-copy-id mobile@$IP
 
-      echo "The THEOS Command has been installed. Please restart your terminal to allow the variables to take effect."
-    else
-      echo "The THEOS Command has been installed."
     fi
 }
 
 linuxInstall() {
+    command -v clang-6.0 >/dev/null 2>&1 || need+="clang-6.0 "
     if [ "$need" != "" ]; then
       read -p "Installing Dependencies (${need}). Press Enter to Continue." || exit 1
       if [ -x "$(command -v apk)" ];       then sudo apk add --no-cache $need || failedinstall=1
