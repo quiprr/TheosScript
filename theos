@@ -31,7 +31,7 @@ usage()
 {
     echo ""
     echo -e "${CYA}THEOS${NC}"
-    echo "usage: theos [commands]"
+    echo -e "${YE}usage: theos [commands]${NC}"
     echo ""
     echo -e "${CYA}BUILDING${NC}"
     echo -e "${VI}-b | --build${NC} | Builds a package. (Put any variables you'd like to pass to the compiler after the command)"
