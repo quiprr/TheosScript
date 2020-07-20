@@ -19,6 +19,8 @@ command -v curl >/dev/null 2>&1 || need+="curl "
 command -v wget >/dev/null 2>&1 || need+="wget "
 command -v git >/dev/null 2>&1 || need+="git "
 command -v python >/dev/null 2>&1 || need+="python "
+command -v perl >/dev/null 2>&1 || need+="perl"
+command -v clang-6.0 >/dev/null 2>&1 || need+="clang-6.0 "
 
 iosInstall() {
     echo "This script is incompatable with iOS."
@@ -27,10 +29,21 @@ iosInstall() {
 
 macosInstall() {
     command -v ldid >/dev/null 2>&1 || need+="ldid "
-    command -v xz >/dev/null 2>&1 || need+="xz "
+    command -v xz >/dev/null 2>&1 || need+="xz"
     if [ "$need" != "" ]; then
       read -p "Using Brew To Install Dependencies (${need}). Press Enter to Continue." || exit 1
       brew install $need
+      echo -e "${GR}All dependencies installed successfully.${NC}"
+    fi
+    read -p "Enter your iPhone's IP Address (just press enter for none): " IP
+    if [[ $IP != "" ]]; then
+      echo "export THEOS_DEVICE_IP=$IP" >> ~/.zprofile
+      echo "export THEOS_DEVICE_IP=$IP" >> ~/.zshrc
+      echo ""
+
+      echo "The THEOS Command has been installed. Please restart your terminal to allow the variables to take effect."
+    else
+      echo "The THEOS Command has been installed."
     fi
 }
 
@@ -45,7 +58,19 @@ linuxInstall() {
       fi
       if [ $failedinstall == 1 ]; then
         echo -e "${BAD}You need to manually install:${NC} $need">&2; 
+      else
+        echo -e "${GR}All dependencies installed successfully.${NC}"
       fi
+    fi
+    read -p "Enter your iPhone's IP Address (just press enter for none): " IP
+    if [[ $IP != "" ]]; then
+      echo "export THEOS_DEVICE_IP=$IP" >> ~/.bashrc
+      echo "export THEOS_DEVICE_IP=$IP" >> ~/.profile
+      echo ""
+
+      echo "The THEOS Command has been installed. Please restart your terminal to allow the variables to take effect."
+    else
+      echo "The THEOS Command has been installed."
     fi
 }
 
@@ -68,16 +93,6 @@ script() {
 
     sudo ln ./theos /usr/local/bin
 
-    read -p "Enter your iPhone's IP Address (just press enter for none): " IP
-    if [[ $IP != "" ]]; then
-      echo "export THEOS_DEVICE_IP=$IP" >> ~/.bashrc
-      echo "export THEOS_DEVICE_IP=$IP" >> ~/.profile
-      echo ""
-
-      echo "The THEOS Command has been installed. Please restart your terminal to allow the variables to take effect."
-    else
-      echo "The THEOS Command has been installed."
-    fi
     cd $x
 }
 

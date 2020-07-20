@@ -12,19 +12,20 @@ BAD='\033[0;91m'                        # Strong red. For errors.
 
 update()
 {
-  echo -e "${CYA}THEOS${NC}"
-  cd $THEOS || exit
-  git pull
-  git submodule update --init --recursive
-  echo -e "${CYA}SDKs${NC}"
-  cd $THEOS/sdks || exit
-  git pull
-  git submodule update --init --recursive
-  echo -e "${CYA}COMMAND${NC}"
-  cd $HOME/theosscript || exit
-  git pull
-  git submodule update --init --recursive
-  cd $x || exit
+    theos=$THEOS
+    echo -e "${CYA}THEOS${NC}"
+    cd $theos || exit
+    fakeroot git pull
+    fakeroot git submodule update --init --recursive
+    echo -e "${CYA}SDKs${NC}"
+    cd $theos/sdks || exit
+    fakeroot git pull
+    fakeroot git submodule update --init --recursive
+    echo -e "${CYA}COMMAND${NC}"
+    cd $HOME/theosscript || exit
+    git pull
+    git submodule update --init --recursive
+    cd $x || exit
 }
 
 usage()
@@ -68,11 +69,16 @@ checkra1n()
 
 install()
 {
-    echo -e "${CYA}Installing dependencies...${NC}"
-    sudo apt-get install fakeroot git perl clang-6.0 build-essential
     echo -e "${CYA}Instantiating variables...${NC}"
-    echo "export THEOS=~/theos" >> ~/.profile
-    echo "export THEOS=~/theos" >> ~/.bashrc
+    distr=$(uname -s)
+    arch=$(uname -p)
+    if [ "$distr" == "Darwin" ]; then 
+        echo "export THEOS=~/theos" >> ~/.zprofile
+        echo "export THEOS=~/theos" >> ~/.zshrc
+    else 
+        echo "export THEOS=~/theos" >> ~/.profile
+        echo "export THEOS=~/theos" >> ~/.bashrc
+    fi
     echo -e "${CYA}Cloning theos...${NC}"
     git clone --recursive https://github.com/theos/theos.git $HOME/theos
     rm -rf $HOME/theos/sdks
@@ -80,8 +86,8 @@ install()
     cd $HOME
     curl -LO https://github.com/sbingner/llvm-project/releases/download/v10.0.0-1/linux-ios-arm64e-clang-toolchain.tar.lzma
     tar -xvf $HOME/linux-ios-arm64e-clang-toolchain.tar.lzma
-    sudo mkdir -p $HOME/theos/toolchain/linux/iphone
-    sudo mv ios-arm64e-clang-toolchain/* $HOME/theos/toolchain/linux/iphone
+    fakeroot mkdir -p $HOME/theos/toolchain/linux/iphone
+    fakeroot mv ios-arm64e-clang-toolchain/* $HOME/theos/toolchain/linux/iphone
     rm -rf ios-arm64e-clang-toolchain
     rm -rf linux-ios-arm64e-clang-toolchain.tar.lzma
     echo -e "${CYA}Getting SDKs...${NC}"
@@ -104,7 +110,7 @@ while [ "$1" != "" ]; do
         -b | --build)               make package $* || echo "Theos could not build this project because you are not in a tweak's directory."
                                 exit
                                 ;;
-        -cl | --clang)              sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+        -cl | --clang)              fakeroot bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
                                 exit
                                 ;;
         -inst | --install)          install
@@ -123,7 +129,10 @@ while [ "$1" != "" ]; do
         -v | --version)             echo -e "${YE}1.0${NC}"
                                 exit
                                 ;;
-        -rl | --rlog)               python $HOME/theosscript/rlogserver.py || echo "RLog couldn't open because you do not have python installed. Run setup.sh to install."
+        -rl | --rlog)               python $HOME/theosscript/rlogserver.py || commandfailed=1
+                                    if [ commandfailed=1 ]
+                                        echo "RLog could not open because Python is not installed."
+                                    fi
                                 exit
                                 ;;
     esac
