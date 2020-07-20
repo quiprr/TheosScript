@@ -6,7 +6,7 @@ sudo apt install fakeroot curl wget git
 
 git clone https://github.com/ajaidan0/theosscript
 
-cd $HOME/TheosScript
+cd $HOME/theosscript
 
 sudo chmod +x ./theos
 
