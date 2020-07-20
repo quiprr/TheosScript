@@ -1,5 +1,7 @@
 #!/bin/bash
 
+x=$PWD
+
 NC='\033[0m'                            # No Color.
 
 VI='\033[0;95m'                         # Violet.
@@ -10,7 +12,6 @@ BAD='\033[0;91m'                        # Strong red. For errors.
 
 update()
 {
-  x=$PWD
   echo -e "${CYA}THEOS${NC}"
   cd $THEOS || exit
   git pull
@@ -38,6 +39,11 @@ usage()
     echo -e "${CYA}MISC${NC}"
     echo -e "${VI}-c | --checkra1n${NC} | Opens checkra1n."
     echo ""
+    echo -e "${VI}-s | --ssh${NC} | SSH to the IP that you selected."
+    echo ""
+    echo -e "${VI}-dr | --devicerun | Run a command on the device's IP that you selected."
+    echo ""
+    echo -e "${VI}-r | --respring | Resprings on your development device."
     echo -e "${CYA}CONFIG${NC}"
     echo -e "${VI}-u | --update${NC} | Updates Theos."
     echo ""
@@ -46,7 +52,7 @@ usage()
     echo -e "${CYA}INSTALL${NC}"
     echo -e "${VI}-cl | --clang${NC} | Installs the latest clang toolchain."
     echo ""
-    echo -e "${VI}-inst${NC} | --install | Installs Theos."
+    echo -e "${VI}-inst | --install${NC} | Installs Theos."
     echo ""
 }
 
@@ -57,7 +63,6 @@ checkra1n()
 
 install()
 {
-    x=$PWD
     echo -e "${CYA}Installing dependencies...${NC}"
     sudo apt-get install fakeroot git perl clang-6.0 build-essential
     echo -e "${CYA}Instantiating variables...${NC}"
@@ -82,22 +87,32 @@ install()
 
 while [ "$1" != "" ]; do
     case $1 in
-        -u | --update )            update
+        -u | --update)              update
                                 exit
                                 ;;
-        -c | --checkra1n )          checkra1n
+        -c | --checkra1n)           checkra1n
                                 exit
                                 ;;
-        -n | --nic )                $THEOS/bin/nic.pl
+        -n | --nic)                 $THEOS/bin/nic.pl
                                 exit
                                 ;;
-        -b | --build )              make clean package FINALPACKAGE=1
+        -b | --build)               make clean package FINALPACKAGE=1
                                 exit
                                 ;;
-        -cl | --clang )             sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+        -cl | --clang)              sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
                                 exit
                                 ;;
         -inst | --install)          install
+                                exit
+                                ;;
+        -s | --ssh)                 ssh mobile@$THEOS_DEVICE_IP
+                                exit
+                                ;;
+        -dr | --devicerun)      shift
+                                    ssh root@$THEOS_DEVICE_IP "$*"
+                                exit
+                                ;;
+        -r | --respring)            ssh root@$THEOS_DEVICE_IP "killall SpringBoard"
                                 exit
                                 ;;
     esac
