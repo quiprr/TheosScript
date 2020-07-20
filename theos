@@ -85,7 +85,7 @@ install()
     rm -rf ios-arm64e-clang-toolchain
     rm -rf linux-ios-arm64e-clang-toolchain.tar.lzma
     echo -e "${CYA}Getting SDKs...${NC}"
-    git clone https://github.com/xybp888/iOS-SDKS $THEOS/sdks
+    git clone https://github.com/xybp888/iOS-SDKS $HOME/theos/sdks
     cd $x
     echo -e "${CYA}Installation is done. In order for the theos variable to take place, you must restart your terminal.${NC}"
 }
