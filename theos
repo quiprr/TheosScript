@@ -116,17 +116,26 @@ while [ "$1" != "" ]; do
         -inst | --install)          install
                                 exit
                                 ;;
-        -s | --ssh)                 ssh mobile@$THEOS_DEVICE_IP
+        -s | --ssh)                 ssh mobile@$THEOS_DEVICE_IP || commandfailed=1
+                                    if [ $commandfailed == 1 ]
+                                        echo "SSH Could not open because you do not have THEOS_DEVICE_IP set up."
+                                    fi
                                 exit
                                 ;;
         -dr | --devicerun)      shift
-                                    ssh root@$THEOS_DEVICE_IP "$*"
+                                    ssh root@$THEOS_DEVICE_IP "$*" || commandfailed=1
+                                    if [ $commandfailed == 1 ]
+                                        echo "SSH Could not open because you do not have THEOS_DEVICE_IP set up."
+                                    fi
                                 exit
                                 ;;
-        -r | --respring)            ssh root@$THEOS_DEVICE_IP "killall SpringBoard"
+        -r | --respring)            ssh root@$THEOS_DEVICE_IP "killall SpringBoard" || commandfailed=1
+                                    if [ $commandfailed == 1 ]
+                                        echo "SSH Could not open because you do not have THEOS_DEVICE_IP set up."
+                                    fi
                                 exit
                                 ;;
-        -v | --version)             echo -e "${YE}1.0${NC}"
+        -v | --version)             echo -e "${YE}1.0.1${NC}"
                                 exit
                                 ;;
         -rl | --rlog)               python $HOME/theosscript/rlogserver.py || commandfailed=1

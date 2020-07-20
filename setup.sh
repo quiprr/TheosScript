@@ -91,7 +91,7 @@ script() {
 
     sudo chmod +x ./theos
 
-    sudo ln ./theos /usr/local/bin
+    sudo ln -s ./theos /usr/local/bin
 
     cd $x
 }
