@@ -1,20 +1,72 @@
-#!/bin/bash
+#!/bin/sh
 
-cd $HOME
+# heavy thanks to kritanta for the baseline of this script.
+x=$PWD
 
-sudo apt install fakeroot curl wget git
+need=""
 
-git clone https://github.com/ajaidan0/theosscript
+command -v fakeroot >/dev/null 2>&1 || need+="fakeroot "
+command -v curl >/dev/null 2>&1 || need+="curl "
+command -v wget >/dev/null 2>&1 || need+="wget "
+command -v git >/dev/null 2>&1 || need+="git "
 
-cd $HOME/theosscript
+iosInstall() {
+    echo "This script is incompatable with iOS."
+    exit 1
+}
 
-sudo chmod +x ./theos
+macosInstall() {
+    command -v ldid >/dev/null 2>&1 || need+="ldid "
+    command -v xz >/dev/null 2>&1 || need+="xz "
+    if [ "$need" != "" ]; then
+      read -p "Using Brew To Install Dependencies (${need}). Press Enter to Continue." || exit 1
+      brew install $need
+    fi
+}
 
-sudo ln ./theos /usr/local/bin
+linuxInstall() {
+    if [ "$need" != "" ]; then
+      read -p "Installing Dependencies (${need}). Press Enter to Continue." || exit 1
+      if [ -x "$(command -v apk)" ];       then sudo apk add --no-cache $need || failedinstall=1
+       elif [ -x "$(command -v apt-get)" ]; then sudo apt-get install $need || failedinstall=1
+       elif [ -x "$(command -v dnf)" ];     then sudo dnf install $need || failedinstall=1
+       elif [ -x "$(command -v zypper)" ];  then sudo zypper install $need || failedinstall=1
+      else failedinstall=1;
+      fi
+      if [ $failedinstall == 1 ]; then
+        echo "You need to manually install: $need">&2; 
+      fi
+    fi
+}
 
-read -p "Enter your iPhone's IP Address: " IP
-echo "export THEOS_DEVICE_IP=${IP}" >> ~/.bashrc
-echo "export THEOS_DEVICE_IP=${IP}" >> ~/.profile
-echo ""
+script() {
+    distr=$(uname -s)
+    arch=$(uname -p)
+    if [ "$distr" == "Darwin" ]; then 
+        if [ "$arch" == "arm" ] || [ "$arch" == "arm64" ]; then iosInstall
+        else macosInstall
+        fi
+    else linuxInstall
+    fi
+    cd $HOME
 
-echo "The THEOS Command has been installed. Please restart your terminal to allow the variables to take effect."
+    cd $HOME/theosscript
+
+    sudo chmod +x ./theos
+
+    sudo ln ./theos /usr/local/bin
+
+    read -p "Enter your iPhone's IP Address (just press enter for none): " IP
+    if [[ $IP != "" ]]; then
+      echo "export THEOS_DEVICE_IP=$IP" >> ~/.bashrc
+      echo "export THEOS_DEVICE_IP=$IP" >> ~/.profile
+      echo ""
+
+      echo "The THEOS Command has been installed. Please restart your terminal to allow the variables to take effect."
+    else
+      echo "The THEOS Command has been installed."
+    fi
+    cd $x
+}
+
+script
