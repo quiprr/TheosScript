@@ -6,6 +6,8 @@ This script uses code from [dragon](https://github.com/DragonBuild/Installer) an
 
 ```bash <(curl -s https://raw.githubusercontent.com/ajaidan0/theosscript/master/setup.sh)```
 
+# Commands
+
 # Install Theos
 
 Once you have ran ```setup.sh```, run ```theos -cl```. After that is finished, run ```theos -inst```. Congratulations, theos is now installed!
