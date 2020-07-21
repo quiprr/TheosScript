@@ -8,6 +8,35 @@ This script uses code from [dragon](https://github.com/DragonBuild/Installer) an
 
 # Commands
 
+THEOS
+usage: theos [commands]
+
+BUILDING
+b | build | Builds a package. (Put any build commands **before** the b flag (i.e. theos final do build))
+
+MISC
+ch | checkra1n | Opens checkra1n.
+
+s | ssh | SSH to the IP that you selected.
+
+r | respring | Resprings on your development device.
+
+dr | devicerun | Runs selected command on your development device.
+
+rl | rlog | Opens RLog.
+
+CONFIG
+u | update | Updates Theos.
+
+n | nic | Runs nic.pl.
+
+v | version | Displays the script's version.
+
+INSTALL
+cl | clang | Installs the latest clang toolchain
+
+inst | install | Installs Theos.
+
 # Install Theos
 
 Once you have ran ```setup.sh```, run ```theos -cl```. After that is finished, run ```theos -inst```. Congratulations, theos is now installed!
