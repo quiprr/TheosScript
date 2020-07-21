@@ -1,10 +1,5 @@
 #!/bin/bash
 
-final=0
-finalpackage="n"
-do=0
-DO=""
-
 x=$PWD
 
 NC='\033[0m'                            # No Color.
