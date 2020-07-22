@@ -36,7 +36,7 @@ usage()
     echo -e "${YE}usage: theos [commands]${NC}"
     echo ""
     echo -e "${CYA}BUILDING${NC}"
-    echo -e "${VI}b | build${NC} | Builds a package. (Put any build commands **before** the b flag (i.e. theos final do build))"
+    echo -e "${VI}b | build${NC} | Builds a package. (Put any build commands **after** the command (i.e. theos b FINALPACKAGE=1))"
     echo ""
     echo -e "${CYA}MISC${NC}"
     echo -e "${VI}ch | checkra1n${NC} | Opens checkra1n."
