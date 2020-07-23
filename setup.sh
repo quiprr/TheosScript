@@ -2,10 +2,25 @@
 
 # heavy thanks to kritanta for the baseline of this script.
 
+command -v theos >/dev/null 2>&1 || commandinstalled="false"
+if [[ $commandinstalled != "false" ]]; then
+  echo "The THEOS Command is already installed." 
+  exit 0
+fi
+
 nosudo() {
     echo "This cannot be ran as root or with sudo."
     exit 1
 }
+
+if [ $SHELL == "/bin/zsh" ]; then 
+  profile1="~/.zshrc"
+  profile2="~/.zprofile"
+else
+  profile1="~/.bashrc"
+  profile2="~/.profile"
+fi
+
 
 crd=$PWD
 
@@ -45,18 +60,6 @@ macosInstall() {
       brew install $need
       echo -e "${GR}All dependencies installed successfully.${NC}"
     fi
-    read -p "Enter your iPhone's IP Address (just press enter for none): " IP
-    if [[ $IP != "" ]]; then
-      echo "export THEOS_DEVICE_IP=$IP" >> ~/.zprofile
-      echo "export THEOS_DEVICE_IP=$IP" >> ~/.zshrc
-      echo ""
-      echo -e "${YE}The script will now set up ssh-copy-id. It will ask you some questions, make sure you answer them.${NC}"
-      echo ""
-      ssh-keygen
-      ssh-copy-id root@$IP
-      ssh-copy-id mobile@$IP
-
-    fi
 }
 
 linuxInstall() {
@@ -74,18 +77,6 @@ linuxInstall() {
       else
         echo -e "${GR}All dependencies installed successfully.${NC}"
       fi
-    fi
-    read -p "Enter your iPhone's IP Address (just press enter for none): " IP
-    if [[ $IP != "" ]]; then
-      echo "export THEOS_DEVICE_IP=$IP" >> ~/.bashrc
-      echo "export THEOS_DEVICE_IP=$IP" >> ~/.profile
-      echo ""
-      echo -e "${YE}The script will now set up ssh-copy-id. It will ask you some questions, make sure you answer them.${NC}"
-      echo ""
-      ssh-keygen
-      ssh-copy-id root@$IP
-      ssh-copy-id mobile@$IP
-
     fi
 }
 
@@ -112,6 +103,21 @@ script() {
     fi 
 
     cd $x
+
+    if [ $THEOS_DEVICE_IP == "" ]; then
+      read -p "Enter your iPhone's IP Address (just press enter for none): " IP
+      if [[ $IP != "" ]]; then
+        echo "export THEOS_DEVICE_IP=$IP" >> $profile1
+        echo "export THEOS_DEVICE_IP=$IP" >> $profile2
+        echo ""
+        echo -e "${YE}The script will now set up ssh-copy-id. It will ask you some questions, make sure you answer them.${NC}"
+        echo ""
+        ssh-keygen
+        ssh-copy-id root@$IP
+        ssh-copy-id mobile@$IP
+
+      fi
+    fi
 
     if [[ $IP != "" ]]; then
       echo "The THEOS Command has been installed. Please restart your terminal to allow the variables to take effect."

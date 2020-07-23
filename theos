@@ -1,5 +1,63 @@
 #!/bin/bash
 
+need=""
+
+macosDepCheck()
+{
+    command -v fakeroot >/dev/null 2>&1 || need+="fakeroot "
+    command -v curl >/dev/null 2>&1 || need+="curl "
+    command -v wget >/dev/null 2>&1 || need+="wget "
+    command -v git >/dev/null 2>&1 || need+="git "
+    command -v python >/dev/null 2>&1 || need+="python "
+    command -v perl >/dev/null 2>&1 || need+="perl"
+    command -v ldid >/dev/null 2>&1 || need+="ldid "
+    command -v xz >/dev/null 2>&1 || need+="xz"
+    if [ "$need" != "" ]; then
+      read -p "Using Brew To Install Dependencies (${need}). Press Enter to Continue." || exit 1
+      brew install $need
+      echo -e "${GR}All dependencies installed successfully.${NC}"
+    fi
+}
+
+linuxDepCheck()
+{
+    command -v fakeroot >/dev/null 2>&1 || need+="fakeroot "
+    command -v curl >/dev/null 2>&1 || need+="curl "
+    command -v wget >/dev/null 2>&1 || need+="wget "
+    command -v git >/dev/null 2>&1 || need+="git "
+    command -v python >/dev/null 2>&1 || need+="python "
+    command -v perl >/dev/null 2>&1 || need+="perl"
+    if [ "$need" != "" ]; then
+      read -p "Installing Dependencies (${need}). Press Enter to Continue." || exit 1
+      if [ -x "$(command -v apk)" ];       then sudo apk add --no-cache $need || failedinstall=1
+       elif [ -x "$(command -v apt-get)" ]; then sudo apt-get install $need || failedinstall=1
+       elif [ -x "$(command -v dnf)" ];     then sudo dnf install $need || failedinstall=1
+       elif [ -x "$(command -v zypper)" ];  then sudo zypper install $need || failedinstall=1
+      else failedinstall=1;
+      fi
+      if [ $failedinstall == 1 ]; then
+        echo -e "${BAD}You need to manually install:${NC} $need">&2; 
+      else
+        echo -e "${GR}All dependencies installed successfully.${NC}"
+      fi
+    fi
+}
+
+distr=$(uname -s)
+arch=$(uname -p)
+if [ "$distr" == "Darwin" ]; then 
+    macosDepCheck
+else linuxDepCheck
+fi
+
+if [ $SHELL == "/bin/zsh" ]; then 
+  profile1="~/.zshrc"
+  profile2="~/.zprofile"
+else
+  profile1="~/.bashrc"
+  profile2="~/.profile"
+fi
+
 x=$PWD
 
 NC='\033[0m'                            # No Color.
@@ -77,13 +135,8 @@ install()
         fakeroot rm -rf $theos
         restart=0
     else
-        if [ "$distr" == "Darwin" ]; then 
-            echo "export THEOS=~/theos" >> ~/.zprofile
-            echo "export THEOS=~/theos" >> ~/.zshrc
-        else 
-            echo "export THEOS=~/theos" >> ~/.profile
-            echo "export THEOS=~/theos" >> ~/.bashrc
-        fi
+        echo "export THEOS=~/theos" >> $profile1
+        echo "export THEOS=~/theos" >> $profile2
         restart=1
     fi
     echo -e "${CYA}Cloning theos...${NC}"
@@ -124,7 +177,7 @@ while [ "$1" != "" ]; do
         $THEOS/bin/nic.pl
         ;;
         dr | devicerun )        
-        ssh root@$DRBIP "$*"
+        ssh root@$THEOS_DEVICE_IP "$*"
         ;;
         b | build)
         shift
