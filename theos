@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# sc00b
+
 need=""
 
 macosDepCheck()
@@ -8,7 +10,7 @@ macosDepCheck()
     command -v curl >/dev/null 2>&1 || need+="curl "
     command -v wget >/dev/null 2>&1 || need+="wget "
     command -v git >/dev/null 2>&1 || need+="git "
-    command -v python >/dev/null 2>&1 || need+="python "
+    command -v python3 >/dev/null 2>&1 || need+="python3 "
     command -v perl >/dev/null 2>&1 || need+="perl"
     command -v ldid >/dev/null 2>&1 || need+="ldid "
     command -v xz >/dev/null 2>&1 || need+="xz"
@@ -25,7 +27,7 @@ linuxDepCheck()
     command -v curl >/dev/null 2>&1 || need+="curl "
     command -v wget >/dev/null 2>&1 || need+="wget "
     command -v git >/dev/null 2>&1 || need+="git "
-    command -v python >/dev/null 2>&1 || need+="python "
+    command -v python3 >/dev/null 2>&1 || need+="python3 "
     command -v perl >/dev/null 2>&1 || need+="perl"
     if [ "$need" != "" ]; then
       read -p "Installing Dependencies (${need}). Press Enter to Continue." || exit 1
@@ -181,7 +183,7 @@ while [ "$1" != "" ]; do
         ;;
         b | build)
         shift
-        make package $*
+        make package -j $*
         exit
         ;;
         cl | clang)             
@@ -201,7 +203,7 @@ while [ "$1" != "" ]; do
         echo -e "${CYA}VERSION${NC}" && echo -e "${YE}1.0.1${NC}"
         ;;
         rl | rlog)              
-        python $HOME/theosscript/rlogserver.py
+        python3 $HOME/theosscript/rlogserver.py
         ;;
         * )                     
         usage
