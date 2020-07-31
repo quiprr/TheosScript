@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# sc00b
-
 need=""
 
 macosDepCheck()

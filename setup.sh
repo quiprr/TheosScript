@@ -2,9 +2,17 @@
 
 # heavy thanks to kritanta for the baseline of this script.
 
+NC='\033[0m'                            # No Color.
+
+VI='\033[0;95m'                         # Violet.
+YE='\033[1;93m'                         # Yellow.
+CYA='\033[0;96m'                        # Cyan.
+GR='\033[0;32m'                         # Green.
+BAD='\033[0;91m'                        # Strong red. For errors.
+
 command -v theos >/dev/null 2>&1 || commandinstalled="false"
 if [[ $commandinstalled != "false" ]]; then
-  echo "The THEOS Command is already installed." 
+  echo -e "${CYA}The THEOS Command is already installed.${NC}" 
   exit 0
 fi
 
@@ -27,14 +35,6 @@ crd=$PWD
 [[ $UID == 0 || $EUID == 0 ]] && nosudo
 
 sudo -p "Password for installation: " printf "" || exit 1
-
-NC='\033[0m'                            # No Color.
-
-VI='\033[0;95m'                         # Violet.
-YE='\033[1;93m'                         # Yellow.
-CYA='\033[0;96m'                        # Cyan.
-GR='\033[0;32m'                         # Green.
-BAD='\033[0;91m'                        # Strong red. For errors.
 
 x=$PWD
 
