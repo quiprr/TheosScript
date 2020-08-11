@@ -105,8 +105,6 @@ usage()
     echo ""
     echo -e "${VI}dr | devicerun${NC} | Runs selected command on your development device."
     echo ""
-    echo -e "${VI}rl | rlog${NC} | Opens RLog."
-    echo ""
     echo -e "${CYA}CONFIG${NC}"
     echo -e "${VI}u | update${NC} | Updates Theos."
     echo ""
@@ -167,6 +165,10 @@ fi
 
 while [ "$1" != "" ]; do
     case $1 in
+        dr | devicerun )        
+        shift
+        ssh root@$THEOS_DEVICE_IP "$*"
+        ;;
         u | update)
         update
         ;;
@@ -176,12 +178,9 @@ while [ "$1" != "" ]; do
         n | nic)                
         $THEOS/bin/nic.pl
         ;;
-        dr | devicerun )        
-        ssh root@$THEOS_DEVICE_IP "$*"
-        ;;
         b | build)
         shift
-        make package -j $*
+        make clean package -j $*
         exit
         ;;
         cl | clang)             
@@ -191,7 +190,7 @@ while [ "$1" != "" ]; do
         install
         ;;
         s | ssh)                
-        ssh mobile@$THEOS_DEVICE_IP > /dev/null 2>&1 || echo "SSH could not open because THEOS_DEVICE_IP is not set up."
+        ssh mobile@$THEOS_DEVICE_IP
         exit
         ;;
         r | respring)           
@@ -199,9 +198,6 @@ while [ "$1" != "" ]; do
         ;;
         v | version)            
         echo -e "${CYA}VERSION${NC}" && echo -e "${YE}1.0.1${NC}"
-        ;;
-        rl | rlog)              
-        python3 $HOME/theosscript/rlogserver.py
         ;;
         * )                     
         usage
