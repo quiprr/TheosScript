@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 need=""
 
@@ -94,33 +94,34 @@ usage()
     echo -e "${YE}usage: theos [commands]${NC}"
     echo ""
     echo -e "${CYA}BUILDING${NC}"
-    echo -e "${VI}b | build${NC} | Builds a package. (Put any build commands **after** the command (i.e. theos b FINALPACKAGE=1))"
+    echo -e "${VI}-b | --build${NC} | Builds a package. (Put any build commands **after** the command (i.e. theos b FINALPACKAGE=1))"
     echo ""
     echo -e "${CYA}MISC${NC}"
-    echo -e "${VI}ch | checkra1n${NC} | Opens checkra1n."
+    echo -e "${VI}-ch | --checkra1n${NC} | Opens checkra1n."
     echo ""
-    echo -e "${VI}s | ssh${NC} | SSH to the IP that you selected."
+    echo -e "${VI}-s | --ssh${NC} | SSH to the IP that you selected."
     echo ""
-    echo -e "${VI}r | respring${NC} | Resprings on your development device."
+    echo -e "${VI}-r | --respring${NC} | Resprings on your development device."
     echo ""
-    echo -e "${VI}dr | devicerun${NC} | Runs selected command on your development device."
+    echo -e "${VI}-dr | --devicerun${NC} | Runs selected command on your development device."
     echo ""
     echo -e "${CYA}CONFIG${NC}"
-    echo -e "${VI}u | update${NC} | Updates Theos."
+    echo -e "${VI}-u | --update${NC} | Updates Theos."
     echo ""
-    echo -e "${VI}n | nic${NC} | Runs nic.pl." 
+    echo -e "${VI}-n | --nic${NC} | Runs nic.pl." 
     echo ""
-    echo -e "${VI}v | version${NC} | Displays the script's version."
+    echo -e "${VI}-v | --version${NC} | Displays the script's version."
     echo ""
     echo -e "${CYA}INSTALL${NC}"
-    echo -e "${VI}cl | clang${NC} | Installs the latest clang toolchain."
+    echo -e "${VI}-cl | --clang${NC} | Installs the latest clang toolchain."
     echo ""
-    echo -e "${VI}inst | install${NC} | Installs Theos."
+    echo -e "${VI}-inst | --install${NC} | Installs Theos."
     echo ""
 }
 
 checkra1n()
 {
+    command -v checkra1n > /dev/null 2>&1 || echo "Checkra1n is not installed." exit 1
     fakeroot checkra1n
 }
 
@@ -165,39 +166,39 @@ fi
 
 while [ "$1" != "" ]; do
     case $1 in
-        dr | devicerun )        
+        -dr | --devicerun )        
         shift
         ssh root@$THEOS_DEVICE_IP "$*"
         ;;
-        u | update)
+        -u | --update)
         update
         ;;
-        ch | checkra1n)         
+        -ch | --checkra1n)         
         checkra1n || echo "Checkra1n could not open because you do not have it installed."
         ;;
-        n | nic)                
+        -n | --nic)                
         $THEOS/bin/nic.pl
         ;;
-        b | build)
+        -b | --build)
         shift
         make clean package -j $*
         exit
         ;;
-        cl | clang)             
+        -cl | --clang)             
         fakeroot bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
         ;;
         inst | install)         
         install
         ;;
-        s | ssh)                
+        -s | --ssh)                
         ssh mobile@$THEOS_DEVICE_IP
         exit
         ;;
-        r | respring)           
+        -r | --respring)           
         ssh root@$THEOS_DEVICE_IP "killall SpringBoard" > /dev/null 2>&1 || echo "SSH could not open because THEOS_DEVICE_IP is not set up."
         ;;
-        v | version)            
-        echo -e "${CYA}VERSION${NC}" && echo -e "${YE}1.0.1${NC}"
+        -v | --version)            
+        echo -e "${CYA}VERSION${NC}" && echo -e "${YE}1.0.2${NC}"
         ;;
         * )                     
         usage
