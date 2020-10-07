@@ -51,11 +51,9 @@ else linuxDepCheck
 fi
 
 if [ $SHELL == "/bin/zsh" ]; then 
-  profile1="~/.zshrc"
-  profile2="~/.zprofile"
+  profile="~/.zshrc"
 else
-  profile1="~/.bashrc"
-  profile2="~/.profile"
+  profile="~/.bashrc"
 fi
 
 x=$PWD
@@ -115,7 +113,7 @@ usage()
     echo -e "${CYA}INSTALL${NC}"
     echo -e "${VI}-cl | --clang${NC} | Installs the latest clang toolchain."
     echo ""
-    echo -e "${VI}-inst | --install${NC} | Installs Theos."
+    echo -e "${VI}-i | --install${NC} | Installs Theos."
     echo ""
 }
 
@@ -134,8 +132,7 @@ install()
         fakeroot rm -rf $theos
         restart=0
     else
-        echo "export THEOS=~/theos" >> $profile1
-        echo "export THEOS=~/theos" >> $profile2
+        echo "export THEOS=~/theos" >> $profile
         restart=1
     fi
     echo -e "${CYA}Cloning theos...${NC}"
@@ -153,7 +150,7 @@ install()
     git clone https://github.com/xybp888/iOS-SDKS $HOME/theos/sdks
     cd $x
     if [ $restart == 1 ]; then
-        echo -e "${CYA}Installation is done. In order for the theos variable to take place, you must restart your terminal.${NC}"
+        source $profile
     else
         echo -e "${CYA}Installation is done.${NC}"
     fi
@@ -187,7 +184,7 @@ while [ "$1" != "" ]; do
         -cl | --clang)             
         fakeroot bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
         ;;
-        inst | install)         
+        -i | --install)         
         install
         ;;
         -s | --ssh)                

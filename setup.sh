@@ -22,11 +22,9 @@ nosudo() {
 }
 
 if [ $SHELL == "/bin/zsh" ]; then 
-  profile1="~/.zshrc"
-  profile2="~/.zprofile"
+  profile="~/.zshrc"
 else
-  profile1="~/.bashrc"
-  profile2="~/.profile"
+  profile="~/.bashrc"
 fi
 
 
@@ -91,7 +89,7 @@ script() {
     fi
     cd $HOME
     
-    git clone https://github.com/ajaidan0/theosscript
+    git clone https://github.com/monotrix/theosscript
 
     cd $HOME/theosscript
 
@@ -107,8 +105,7 @@ script() {
     if [ $THEOS_DEVICE_IP == "" ]; then
       read -p "Enter your iPhone's IP Address (just press enter for none): " IP
       if [[ $IP != "" ]]; then
-        echo "export THEOS_DEVICE_IP=$IP" >> $profile1
-        echo "export THEOS_DEVICE_IP=$IP" >> $profile2
+        echo "export THEOS_DEVICE_IP=$IP" >> $profile
         echo ""
         echo -e "${YE}The script will now set up ssh-copy-id. It will ask you some questions, make sure you answer them.${NC}"
         echo ""
@@ -120,7 +117,7 @@ script() {
     fi
 
     if [[ $IP != "" ]]; then
-      echo "The THEOS Command has been installed. Please restart your terminal to allow the variables to take effect."
+      source $profile
     else
       echo "The THEOS Command has been installed."
     fi
