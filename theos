@@ -127,7 +127,7 @@ install()
 {
     echo -e "${CYA}Instantiating variables...${NC}"
     distr=$(uname -s)
-    if [ $THEOS != "" ]; then
+    if [ "$THEOS" != "" ]; then
         theos=$THEOS
         fakeroot rm -rf $theos
         restart=0

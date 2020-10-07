@@ -102,7 +102,7 @@ script() {
 
     cd $x
 
-    if [ $THEOS_DEVICE_IP == "" ]; then
+    if [ "$THEOS_DEVICE_IP" == "" ]; then
       read -p "Enter your iPhone's IP Address (just press enter for none): " IP
       if [[ $IP != "" ]]; then
         echo "export THEOS_DEVICE_IP=$IP" >> $profile
