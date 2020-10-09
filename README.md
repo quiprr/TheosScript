@@ -8,6 +8,6 @@ This script uses code from [dragon](https://github.com/DragonBuild/Installer) an
 
 # Install Theos
 
-Once you have ran ```setup.sh```, run ```theos -cl```. After that is finished, run ```theos -inst```. Congratulations, theos is now installed!
+Once you have ran ```setup.sh```, run ```theos -cl```. After that is finished, run ```theos -i```. Congratulations, theos is now installed!
 
 Note: Best used in conjunction with [mpi](https://github.com/samoht9277/mpi)
