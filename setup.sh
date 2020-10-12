@@ -10,18 +10,12 @@ CYA='\033[0;96m'                        # Cyan.
 GR='\033[0;32m'                         # Green.
 BAD='\033[0;91m'                        # Strong red. For errors.
 
-command -v theos >/dev/null 2>&1 || commandinstalled="false"
-if [[ $commandinstalled != "false" ]]; then
-  echo -e "${CYA}The THEOS Command is already installed.${NC}" 
-  exit 0
-fi
-
 nosudo() {
     echo "This cannot be ran as root or with sudo."
     exit 1
 }
 
-if [ $SHELL == "/bin/zsh" ]; then 
+if [ $SHELL == "/usr/bin/zsh" ]; then 
   profile="~/.zshrc"
 else
   profile="~/.bashrc"
@@ -34,7 +28,9 @@ crd=$PWD
 
 sudo -p "Password for installation: " printf "" || exit 1
 
-x=$PWD
+command -v theos >/dev/null 2>&1 || sudo rm /usr/bin/theos && rm $HOME/theosscript
+
+previousdir=$PWD
 
 need=""
 
@@ -44,11 +40,6 @@ command -v wget >/dev/null 2>&1 || need+="wget "
 command -v git >/dev/null 2>&1 || need+="git "
 command -v python >/dev/null 2>&1 || need+="python "
 command -v perl >/dev/null 2>&1 || need+="perl"
-
-iosInstall() {
-    echo "This script is incompatable with iOS."
-    exit 1
-}
 
 macosInstall() {
     command -v ldid >/dev/null 2>&1 || need+="ldid "
@@ -79,10 +70,8 @@ linuxInstall() {
 }
 
 script() {
-    distr=$(uname -s)
-    arch=$(uname -p)
-    if [ "$distr" == "Darwin" ]; then 
-        if [ "$arch" == "arm" ] || [ "$arch" == "arm64" ]; then iosInstall
+    if [ "$(uname -s)" == "Darwin" ]; then 
+        if [ "$(uname -p)" == "arm" ] || [ "$(uname -p)" == "arm64" ]; then echo "This script is incompatable with iOS." exit 1
         else macosInstall
         fi
     else linuxInstall
@@ -95,32 +84,13 @@ script() {
 
     sudo chmod +x ./theos
 
-    if [ "$distr" == "Darwin" ]; then
-      sudo ln ./theos /usr/local/bin/theos
-    else sudo ln ./theos /usr/bin/theos
+    if [ "$(uname -s)" == "Darwin" ]; then
+      sudo ln -s ./theos /usr/local/bin/theos
+    else sudo ln -s ./theos /usr/bin/theos
     fi 
 
-    cd $x
-
-    if [ "$THEOS_DEVICE_IP" == "" ]; then
-      read -p "Enter your iPhone's IP Address (just press enter for none): " IP
-      if [[ $IP != "" ]]; then
-        echo "export THEOS_DEVICE_IP=$IP" >> $profile
-        echo ""
-        echo -e "${YE}The script will now set up ssh-copy-id. It will ask you some questions, make sure you answer them.${NC}"
-        echo ""
-        ssh-keygen
-        ssh-copy-id root@$IP
-        ssh-copy-id mobile@$IP
-
-      fi
-    fi
-
-    if [[ $IP != "" ]]; then
-      source $profile
-    else
-      echo "The THEOS Command has been installed."
-    fi
+    cd $previousdir
+    echo "The THEOS Command has been installed."
 }
 
 script
