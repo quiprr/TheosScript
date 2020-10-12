@@ -84,7 +84,7 @@ script() {
         else
           sudo rm /usr/bin/theos
         fi
-        rm theosscript
+        rm -rf theosscript
     fi
     
     git clone https://github.com/monotrix/theosscript
