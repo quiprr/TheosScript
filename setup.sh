@@ -28,7 +28,7 @@ crd=$PWD
 
 sudo -p "Password for installation: " printf "" || exit 1
 
-command -v theos >/dev/null 2>&1 || sudo rm /usr/bin/theos && rm $HOME/theosscript
+command -v theos >/dev/null 2>&1 || commandinstalled="false"
 
 previousdir=$PWD
 
@@ -77,6 +77,15 @@ script() {
     else linuxInstall
     fi
     cd $HOME
+
+    if [ "$commandinstalled" != "false" ]; then
+        if [ "$(uname -s)" == "Darwin" ]; then
+          fakeroot rm /usr/local/bin/theos
+        else
+          fakeroot rm /usr/bin/theos
+        fi
+        rm theosscript
+    fi
     
     git clone https://github.com/monotrix/theosscript
 
