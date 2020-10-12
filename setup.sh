@@ -80,9 +80,9 @@ script() {
 
     if [ "$commandinstalled" != "false" ]; then
         if [ "$(uname -s)" == "Darwin" ]; then
-          fakeroot rm /usr/local/bin/theos
+          sudo rm /usr/local/bin/theos
         else
-          fakeroot rm /usr/bin/theos
+          sudo rm /usr/bin/theos
         fi
         rm theosscript
     fi
