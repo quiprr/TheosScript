@@ -94,8 +94,8 @@ script() {
     sudo chmod +x ./theos
 
     if [ "$(uname -s)" == "Darwin" ]; then
-      sudo ln -s ./theos /usr/local/bin/theos
-    else sudo ln -s ./theos /usr/bin/theos
+      sudo ln -s $HOME/theosscript/theos /usr/local/bin/theos
+    else sudo ln -s $HOME/theosscript/theos /usr/bin/theos
     fi 
 
     cd $previousdir
