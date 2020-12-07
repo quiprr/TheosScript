@@ -29,7 +29,7 @@ linuxInit()
     command -v perl >/dev/null 2>&1 || need+="perl"
     if [ "$need" != "" ]; then
       read -p "Installing Dependencies (${need}). Press Enter to Continue." || exit 1
-      if [ -x "$(command -v apk)" ];       then sudo apk add --no-cache $need || failedinstall=1
+      if [ -x "$(command -v apk)" ];        then sudo apk add --no-cache $need || failedinstall=1
        elif [ -x "$(command -v apt-get)" ]; then sudo apt-get install $need || failedinstall=1
        elif [ -x "$(command -v dnf)" ];     then sudo dnf install $need || failedinstall=1
        elif [ -x "$(command -v zypper)" ];  then sudo zypper install $need || failedinstall=1
@@ -94,9 +94,9 @@ usage() {
     echo -e "${CYA}MISC${NC}"
     echo -e "${VI}-ch | --checkra1n${NC} | Opens checkra1n."
     echo ""
-    echo -e "${VI}-s | --ssh${NC} | SSH to the IP that you selected."
+    echo -e "${VI}-s | --ssh${NC} | SSH to your development device."
     echo ""
-    echo -e "${VI}-r | --respring${NC} | Resprings on your development device."
+    echo -e "${VI}-r | --respring${NC} | Resprings your development device."
     echo ""
     echo -e "${VI}-dr | --devicerun${NC} | Runs selected command on your development device."
     echo ""
@@ -116,29 +116,31 @@ usage() {
 
 install()
 {
-    echo -e "${CYA}Instantiating variables...${NC}"
-    distr=$(uname -s)
     if [ "$THEOS" != "" ]; then
+        echo -e "${CYA}Theos is already installed, installing to the previous directory...${NC}"
         theos=$THEOS
         fakeroot rm -rf $theos
         restart=0
     else
+        echo -e "${CYA}Instantiating variables...${NC}"
         echo "export THEOS=~/theos" >> $profile
+        theos=$HOME/theos
         restart=1
     fi
     echo -e "${CYA}Cloning theos...${NC}"
-    git clone --recursive https://github.com/theos/theos.git $HOME/theos
-    rm -rf $HOME/theos/sdks
+    git clone --recursive https://github.com/theos/theos.git $theos
+    cd $theos; git checkout kirb/break-stuff
+    rm -rf $theos/sdks
     echo -e "${CYA}Getting toolchain...${NC}"
     cd $HOME
     curl -LO https://github.com/sbingner/llvm-project/releases/download/v10.0.0-1/linux-ios-arm64e-clang-toolchain.tar.lzma
     tar -xvf $HOME/linux-ios-arm64e-clang-toolchain.tar.lzma
-    fakeroot mkdir -p $HOME/theos/toolchain/linux/iphone
-    fakeroot mv ios-arm64e-clang-toolchain/* $HOME/theos/toolchain/linux/iphone
+    fakeroot mkdir -p $theos/toolchain/linux/iphone
+    fakeroot mv ios-arm64e-clang-toolchain/* $theos/toolchain/linux/iphone
     rm -rf ios-arm64e-clang-toolchain
     rm -rf linux-ios-arm64e-clang-toolchain.tar.lzma
     echo -e "${CYA}Getting SDKs...${NC}"
-    git clone https://github.com/xybp888/iOS-SDKS $HOME/theos/sdks
+    git clone https://github.com/xybp888/iOS-SDKS $theos/sdks
     cd $x
     if [ $restart == 1 ]; then
         source $profile
@@ -162,7 +164,7 @@ while [ "$1" != "" ]; do
         update
         ;;
         -ch | --checkra1n)         
-        fakeroot checkra1n || echo "Checkra1n could not open because you do not have it installed."
+        sudo checkra1n || echo "Checkra1n could not open because you do not have it installed."
         ;;
         -n | --nic)                
         $THEOS/bin/nic.pl
