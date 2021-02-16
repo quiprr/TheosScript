@@ -2,56 +2,53 @@
 
 need=""
 
-macosInit()
-{
-    command -v fakeroot >/dev/null 2>&1 || need+="fakeroot "
-    command -v curl >/dev/null 2>&1 || need+="curl "
-    command -v wget >/dev/null 2>&1 || need+="wget "
-    command -v git >/dev/null 2>&1 || need+="git "
-    command -v python3 >/dev/null 2>&1 || need+="python3 "
-    command -v perl >/dev/null 2>&1 || need+="perl"
-    command -v ldid >/dev/null 2>&1 || need+="ldid "
-    command -v xz >/dev/null 2>&1 || need+="xz"
-    if [ "$need" != "" ]; then
-      read -p "Using Brew To Install Dependencies (${need}). Press Enter to Continue." || exit 1
-      brew install $need
-      echo -e "${GR}All dependencies installed successfully.${NC}"
-    fi
+macosInit() {
+  command -v curl >/dev/null 2>&1 || need+="curl "
+  command -v wget >/dev/null 2>&1 || need+="wget "
+  command -v git >/dev/null 2>&1 || need+="git "
+  command -v python3 >/dev/null 2>&1 || need+="python3 "
+  command -v perl >/dev/null 2>&1 || need+="perl"
+  command -v ldid >/dev/null 2>&1 || need+="ldid "
+  command -v xz >/dev/null 2>&1 || need+="xz"
+  if [ "$need" != "" ]; then
+    read -p "Using Brew To Install Dependencies (${need}). Press Enter to Continue." || exit 1
+    brew install $need
+    echo -e "${GR}All dependencies installed successfully.${NC}"
+  fi
 }
 
-linuxInit()
-{
-    command -v fakeroot >/dev/null 2>&1 || need+="fakeroot "
-    command -v curl >/dev/null 2>&1 || need+="curl "
-    command -v wget >/dev/null 2>&1 || need+="wget "
-    command -v git >/dev/null 2>&1 || need+="git "
-    command -v python3 >/dev/null 2>&1 || need+="python3 "
-    command -v perl >/dev/null 2>&1 || need+="perl"
-    if [ "$need" != "" ]; then
-      read -p "Installing Dependencies (${need}). Press Enter to Continue." || exit 1
-      if [ -x "$(command -v apk)" ];        then sudo apk add --no-cache $need || failedinstall=1
-       elif [ -x "$(command -v apt-get)" ]; then sudo apt-get install $need || failedinstall=1
-       elif [ -x "$(command -v dnf)" ];     then sudo dnf install $need || failedinstall=1
-       elif [ -x "$(command -v zypper)" ];  then sudo zypper install $need || failedinstall=1
-      else failedinstall=1;
-      fi
-      if [ $failedinstall == 1 ]; then
-        echo -e "${BAD}You need to manually install:${NC} $need">&2; 
-      else
-        echo -e "${GR}All dependencies installed successfully.${NC}"
-      fi
+linuxInit() {
+  command -v fakeroot >/dev/null 2>&1 || need+="fakeroot "
+  command -v curl >/dev/null 2>&1 || need+="curl "
+  command -v wget >/dev/null 2>&1 || need+="wget "
+  command -v git >/dev/null 2>&1 || need+="git "
+  command -v python3 >/dev/null 2>&1 || need+="python3 "
+  command -v perl >/dev/null 2>&1 || need+="perl"
+  if [ "$need" != "" ]; then
+    read -p "Installing Dependencies (${need}). Press Enter to Continue." || exit 1
+    if [ -x "$(command -v apk)" ];        then sudo apk add --no-cache $need || failedinstall=1
+      elif [ -x "$(command -v apt-get)" ]; then sudo apt-get install $need || failedinstall=1
+      elif [ -x "$(command -v dnf)" ];     then sudo dnf install $need || failedinstall=1
+      elif [ -x "$(command -v zypper)" ];  then sudo zypper install $need || failedinstall=1
+    else failedinstall=1;
     fi
+    if [ $failedinstall == 1 ]; then
+      echo -e "${BAD}You need to manually install:${NC} $need">&2; 
+    else
+      echo -e "${GR}All dependencies installed successfully.${NC}"
+    fi
+  fi
 }
 
 if [ "$(uname -s)" == "Darwin" ]; then 
-    macosInit
+  macosInit
 else linuxInit
 fi
 
-if [ $SHELL == "/usr/bin/zsh" ]; then 
-  profile="~/.zshrc"
+if [ $SHELL == "/usr/bin/zsh" ] || [ $SHELL == "/bin/zsh" ]; then 
+  profile="$HOME/.zshrc"
 else
-  profile="~/.bashrc"
+  profile="$HOME/.bashrc"
 fi
 
 x=$PWD
@@ -64,89 +61,82 @@ CYA='\033[0;96m'                        # Cyan.
 GR='\033[0;32m'                         # Green.
 BAD='\033[0;91m'                        # Strong red. For errors.
 
-update()
-{
-    theos=$THEOS
-    echo -e "${CYA}THEOS${NC}"
-    cd $theos || exit
-    fakeroot git pull
-    fakeroot git submodule update --init --recursive
-    echo -e "${CYA}SDKs${NC}"
-    cd $theos/sdks || exit
-    fakeroot git pull
-    fakeroot git submodule update --init --recursive
-    echo -e "${CYA}COMMAND${NC}"
-    cd $HOME/theosscript || exit
-    git pull
-    git submodule update --init --recursive
-    cd $x || exit
-    echo ""
+update() {
+  if [ -w $THEOS ]; then prefix=""; else prefix="sudo"; fi
+  echo -e "${CYA}THEOS${NC}"
+  cd $THEOS || exit
+  $prefix git pull
+  $prefix git submodule update --init --recursive
+  echo -e "${CYA}SDKs${NC}"
+  cd $THEOS/sdks || exit
+  $prefix git pull
+  $prefix git submodule update --init --recursive
+  echo -e "${CYA}COMMAND${NC}"
+  cd $HOME/theosscript || exit
+  git pull
+  git submodule update --init --recursive
+  cd $x || exit
+  echo ""
 }
 
 usage() {
-    echo ""
-    echo -e "${CYA}THEOS${NC}"
-    echo -e "${YE}usage: theos [commands]${NC}"
-    echo ""
-    echo -e "${CYA}BUILDING${NC}"
-    echo -e "${VI}-b | --build${NC} | Builds a package. (Put any build commands after the command (i.e. theos -b FINALPACKAGE=1))"
-    echo ""
-    echo -e "${CYA}MISC${NC}"
-    echo -e "${VI}-ch | --checkra1n${NC} | Opens checkra1n."
-    echo ""
-    echo -e "${VI}-s | --ssh${NC} | SSH to your development device."
-    echo ""
-    echo -e "${VI}-r | --respring${NC} | Resprings your development device."
-    echo ""
-    echo -e "${VI}-dr | --devicerun${NC} | Runs selected command on your development device."
-    echo ""
-    echo -e "${CYA}CONFIG${NC}"
-    echo -e "${VI}-u | --update${NC} | Updates Theos."
-    echo ""
-    echo -e "${VI}-n | --nic${NC} | Runs nic.pl." 
-    echo ""
-    echo -e "${VI}-v | --version${NC} | Displays the script's version."
-    echo ""
-    echo -e "${CYA}INSTALL${NC}"
-    echo -e "${VI}-cl | --clang${NC} | Installs the latest clang toolchain."
-    echo ""
-    echo -e "${VI}-i | --install${NC} | Installs Theos."
-    echo ""
+  echo ""
+  echo -e "${CYA}THEOS${NC}"
+  echo -e "${YE}usage: theos [commands]${NC}"
+  echo ""
+  echo -e "${CYA}BUILDING${NC}"
+  echo -e "${VI}-b | --build${NC} | Builds a package. (Put any build commands after the command (i.e. theos -b FINALPACKAGE=1))"
+  echo ""
+  echo -e "${CYA}MISC${NC}"
+  echo -e "${VI}-ch | --checkra1n${NC} | Opens checkra1n."
+  echo ""
+  echo -e "${VI}-s | --ssh${NC} | SSH to your development device."
+  echo ""
+  echo -e "${VI}-r | --respring${NC} | Resprings your development device."
+  echo ""
+  echo -e "${VI}-dr | --devicerun${NC} | Runs selected command on your development device."
+  echo ""
+  echo -e "${CYA}CONFIG${NC}"
+  echo -e "${VI}-u | --update${NC} | Updates Theos."
+  echo ""
+  echo -e "${VI}-n | --nic${NC} | Runs nic.pl." 
+  echo ""
+  echo -e "${VI}-v | --version${NC} | Displays the script's version."
+  echo ""
+  echo -e "${CYA}INSTALL${NC}"
+  echo -e "${VI}-cl | --clang${NC} | Installs the latest clang toolchain."
+  echo ""
+  echo -e "${VI}-i | --install${NC} | Installs Theos."
+  echo ""
 }
 
-install()
-{
-    if [ "$THEOS" != "" ]; then
-        echo -e "${CYA}Theos is already installed, installing to the previous directory...${NC}"
-        theos=$THEOS
-        fakeroot rm -rf $theos
-        restart=0
-    else
-        echo -e "${CYA}Instantiating variables...${NC}"
-        echo "export THEOS=~/theos" >> $profile
-        theos=$HOME/theos
-        restart=1
-    fi
-    echo -e "${CYA}Cloning theos...${NC}"
-    git clone --recursive https://github.com/theos/theos.git $theos
-    cd $theos; git checkout kirb/break-stuff
-    rm -rf $theos/sdks
+install() {
+  if [ "$THEOS" != "" ]; then
+    echo -e "${CYA}Theos is already installed, installing to $HOME...${NC}"
+    if [ -w $THEOS ]; then prefix=""; else prefix="sudo"; fi
+    $prefix rm -rf $THEOS
+  fi
+  echo -e "${CYA}Instantiating variables...${NC}"
+  echo "export THEOS=~/theos" >> $profile
+  theos=$HOME/theos
+  echo -e "${CYA}Cloning theos...${NC}"
+  git clone --recursive https://github.com/theos/theos.git $theos
+  rm -rf $theos/sdks
+  if [ !"$(uname -s)" == "Darwin" ]; then 
     echo -e "${CYA}Getting toolchain...${NC}"
     cd $HOME
     curl -LO https://github.com/sbingner/llvm-project/releases/download/v10.0.0-1/linux-ios-arm64e-clang-toolchain.tar.lzma
     tar -xvf $HOME/linux-ios-arm64e-clang-toolchain.tar.lzma
-    fakeroot mkdir -p $theos/toolchain/linux/iphone
-    fakeroot mv ios-arm64e-clang-toolchain/* $theos/toolchain/linux/iphone
+    mkdir -p $theos/toolchain/linux/iphone
+    mv ios-arm64e-clang-toolchain/* $theos/toolchain/linux/iphone
     rm -rf ios-arm64e-clang-toolchain
     rm -rf linux-ios-arm64e-clang-toolchain.tar.lzma
-    echo -e "${CYA}Getting SDKs...${NC}"
-    git clone https://github.com/xybp888/iOS-SDKS $theos/sdks
-    cd $x
-    if [ $restart == 1 ]; then
-        source $profile
-    else
-        echo -e "${CYA}Installation is done.${NC}"
-    fi
+  fi
+  echo -e "${CYA}Getting SDKs...${NC}"
+  git clone https://github.com/theos/sdks $theos/sdks
+  cd $x
+  source $profile &>/dev/null
+  echo -e "${CYA}Installation is done.${NC}"
 }
 
 if [ "$1" == "" ]; then
@@ -155,44 +145,44 @@ if [ "$1" == "" ]; then
 fi
 
 while [ "$1" != "" ]; do
-    case $1 in
-        -dr | --devicerun )        
-        shift
-        ssh root@$THEOS_DEVICE_IP "$*" || echo "SSH could not open because THEOS_DEVICE_IP is not set up, or some other error occured."
-        ;;
-        -u | --update)
-        update
-        ;;
-        -ch | --checkra1n)         
-        sudo checkra1n || echo "Checkra1n could not open because you do not have it installed."
-        ;;
-        -n | --nic)                
-        $THEOS/bin/nic.pl
-        ;;
-        -b | --build)
-        shift
-        make clean package -j $*
-        exit
-        ;;
-        -cl | --clang)             
-        fakeroot bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
-        ;;
-        -i | --install)         
-        install
-        ;;
-        -s | --ssh)                
-        ssh mobile@$THEOS_DEVICE_IP || echo "SSH could not open because THEOS_DEVICE_IP is not set up, or some other error occured."
-        exit
-        ;;
-        -r | --respring)           
-        ssh root@$THEOS_DEVICE_IP "killall SpringBoard" > /dev/null 2>&1 || echo "SSH could not open because THEOS_DEVICE_IP is not set up, or some other error occured."
-        ;;
-        -v | --version)            
-        echo -e "${CYA}VERSION${NC}" && echo -e "${YE}1.0.2${NC}"
-        ;;
-        * )                     
-        usage
-        exit
-    esac
+  case $1 in
+    -dr | --devicerun )        
     shift
+    ssh root@$THEOS_DEVICE_IP "$*" || echo "SSH could not open because THEOS_DEVICE_IP is not set up, or some other error occured."
+    ;;
+    -u | --update)
+    update
+    ;;
+    -ch | --checkra1n)         
+    sudo checkra1n || echo "Checkra1n could not open because you do not have it installed."
+    ;;
+    -n | --nic)                
+    $THEOS/bin/nic.pl
+    ;;
+    -b | --build)
+    shift
+    make clean package -j $*
+    exit
+    ;;
+    -cl | --clang)             
+    fakeroot bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+    ;;
+    -i | --install)         
+    install
+    ;;
+    -s | --ssh)                
+    ssh mobile@$THEOS_DEVICE_IP || echo "SSH could not open because THEOS_DEVICE_IP is not set up, or some other error occured."
+    exit
+    ;;
+    -r | --respring)           
+    ssh root@$THEOS_DEVICE_IP "killall SpringBoard" > /dev/null 2>&1 || echo "SSH could not open because THEOS_DEVICE_IP is not set up, or some other error occured."
+    ;;
+    -v | --version)            
+    echo -e "${CYA}VERSION${NC}" && echo -e "${YE}1.0.3${NC}"
+    ;;
+    * )                     
+    usage
+    exit
+  esac
+  shift
 done
