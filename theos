@@ -45,10 +45,10 @@ if [ "$(uname -s)" == "Darwin" ]; then
 else linuxInit
 fi
 
-if [ $SHELL == "/usr/bin/zsh" ] || [ $SHELL == "/bin/zsh" ]; then 
-  profile="$HOME/.zshrc"
+if [[ $SHELL == *"zsh"* ]]; then 
+  profile="$HOME/.zprofile"
 else
-  profile="$HOME/.bashrc"
+  profile="$HOME/.profile"
 fi
 
 x=$PWD
